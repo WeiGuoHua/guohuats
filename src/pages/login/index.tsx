@@ -1,6 +1,7 @@
 
 import { Form, Button, Input, Space, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { set } from '../../utils/storage';
 import './login.less';
 
 const layout = {
@@ -12,12 +13,10 @@ const tailLayout = {
 };
 
 function Login() {
-  const navigate = useNavigate();
   function onFinish(values: any) {
     console.log(values);
-    navigate('/home');
     message.success('登录成功！')
-    localStorage.setItem('token', 'token');
+    set('token', '123456')
 
   };
 
@@ -32,7 +31,7 @@ function Login() {
       <Form.Item {...tailLayout}>
         <Space>
           <Button type="primary" htmlType="submit">
-            登录
+            <Link to="/admin/home">登录</Link>
           </Button>
           <Button type="primary" htmlType="reset">
             重置

@@ -4,60 +4,55 @@ import { UserOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import React, { useEffect, useState } from 'react';
-import { Link, matchRoutes, useLocation } from 'react-router-dom';
-import routers from '../router';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { IRouter, routers } from '../router';
 
-const MainMenu: React.FC = () => {
-  const location = useLocation();
-  const [defaultSelectedKeys, setDefaultSelectedKeys] = useState<string[]>([]);
-  const [defaultOpenKeys, setDefaultOpenKeys] = useState<string[]>([]);
-  const [isInit, setIsInit] = useState<Boolean>(false)
-  const [collapsed, setCollapsed] = useState(false);
-  useEffect(() => {
-    const routes = matchRoutes(routers, location.pathname); // 返回匹配到的路由数组对象，每一个对象都是一个路由对象
-    const pathArr: string[] = [];
-    if (routes !== null) {
-      routes.forEach((item) => {
-        const path = item.route.path;
-        if (path) {
-          pathArr.push(path);
-        }
-      })
-    }
-    setDefaultSelectedKeys(pathArr);
-    setDefaultOpenKeys(pathArr);
-    setIsInit(true);
-  }, [location.pathname]);
-  if (!isInit) {
-    return null;
-  }
-  return (
-    <div className='sider'>
-      <Sider style={{ height: "100%" }} collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
-        <div className="logo" />
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={defaultSelectedKeys}
-          defaultOpenKeys={defaultOpenKeys}
-          style={{ height: '100%', borderRight: 0 }}
-          theme="dark"
-        >
-          <Menu.Item key="1" icon={<UserOutlined />} >
-            <Link to='/home'>首页</Link>
-          </Menu.Item>
-          <SubMenu key="/user" icon={<UserOutlined />} title="用户管理">
-            <Menu.Item key="3">
-              <Link to='/user/list'>用户信息</Link>
-            </Menu.Item>
 
+export default class MainMenu extends Component {
+  generateMenu = (data: IRouter[]) => {
+    return data.map((item: any) => {
+      if (item.children) {
+        return (
+          <SubMenu
+            key={item.key}
+            icon={<UserOutlined />}
+            title={item.title}
+          >
+            {this.generateMenu(item.children)}
           </SubMenu>
+        )
+      }
+      return (
+        <Menu.Item key={item.key} icon={item.icon}>
+          <Link to={item.path}>{item.title}</Link>
+        </Menu.Item>
+      );
+    }
+    )
+  }
+  // 生成动态菜单
+  render() {
+    return (
+      <div className='sider'>
+        <Sider
+          style={{ height: "100%" }}
+          collapsible 
+          collapsed={false}
+          // onCollapse={value => setCollapsed(value)}
+        >
+          <div className="logo" />
+          <Menu
+            mode="inline"
+            style={{ height: '100%', borderRight: 0 }}
+            theme="dark"
+            // items={this.generateMenu(routers)}
+          >
+            {this.generateMenu(routers)}
+          </Menu>
+        </Sider>
 
-        </Menu>
-      </Sider>
-
-    </div>
-  );
+      </div>
+    )
+  };
 };
-
-export default MainMenu;

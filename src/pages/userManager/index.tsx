@@ -1,7 +1,7 @@
-import { Button, DatePicker, Space, Table, Tag } from "antd";
+import { Button,Checkbox,Form,Input,Modal, Radio, Select, Space, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
-
-
+import { useState } from "react";
+import './style.less'
 interface DataType {
   key: string;
   name: string;
@@ -82,13 +82,70 @@ const data: DataType[] = [
 ];
 
 function UserManager() {
+  const [visible, setVisible] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
+  const onFormLayoutChange = ({ disabled }: { disabled: boolean }) => {
+    setComponentDisabled(disabled);
+  };
+  const showModal = () => {
+    setVisible(true);
+  };
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+    setVisible(false);
+    setConfirmLoading(false);
+  };
+
+  const handleCancel = () => {
+    console.log('Clicked cancel button');
+    setVisible(false);
+  };
   return (
-    <div>
-      <h1>用户管理</h1>
-      <DatePicker />
-      <Button type="primary">查询</Button>
-      <Table columns={columns} dataSource={data} />
+    <div className="user-container">
+      <div className="header-search">
+        <Button type="primary">查询</Button>
+        <Button type="primary" onClick={showModal}>新增</Button>
+        <Button type="primary">编辑</Button>
+        <Button type="primary">删除</Button>
+      </div>
       
+      <Table columns={columns} dataSource={data} />
+      <Modal
+        title="新增用户"
+        visible={visible}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        <Form
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 14 }}
+          // layout="horizontal"
+          onValuesChange={onFormLayoutChange}
+          disabled={componentDisabled}
+        >
+          <Form.Item label="Chekbox" name="disabled" valuePropName="checked">
+            <Checkbox>Checkbox</Checkbox>
+          </Form.Item>
+          <Form.Item label="Radio">
+            <Radio.Group>
+              <Radio value="apple"> Apple </Radio>
+              <Radio value="pear"> Pear </Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item label="Input">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Select">
+            <Select>
+              <Select.Option value="demo">Demo</Select.Option>
+            </Select>
+          </Form.Item>
+          
+        </Form>
+      </Modal>
     </div>
   );
 }

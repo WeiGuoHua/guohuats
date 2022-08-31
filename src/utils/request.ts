@@ -34,6 +34,8 @@ service.interceptors.response.use((config: any) => {
         window.location.href = "/login";
       }
     });
+  }else{
+     message.error("请求失败！");
   }
 }, (error) => {
   Modal.error({

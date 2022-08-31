@@ -1,8 +1,8 @@
 import { lazy } from "react";
-// import AppLayout from "../pages/Applayout";
-const AppLayout = lazy(() => import("../pages/Applayout"));
+const AppLayout = lazy(() => import("../components/View"));
 const Home = lazy(() => import("../pages/home"));
 const Login = lazy(() => import("../pages/login"));
 const User = lazy(() => import("../pages/userManager"));
+const Page404 = lazy(() => import("../components/page404"));
 
-export { Home, Login, AppLayout, User };
+export { Home, Login, AppLayout, User, Page404 };

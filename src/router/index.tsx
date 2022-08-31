@@ -1,36 +1,71 @@
-import { ReactNode, Suspense } from "react";
-import { RouteObject } from "react-router-dom";
 
-// 切换页面会出现闪屏现象
-// 解决思路：公共页面不采用懒加载的方式 并在App.tsx去除Suspense的包裹
-// 用懒加载实现优化
-// const AppLayout = lazy(() => import('../pages/appLayout'));
-import { Home, Login, AppLayout, User } from "./routeList"
-// 实现懒加载的用Suspense包裹 定义函数
-const lazyLoad = (children: ReactNode): ReactNode => {
-  return <Suspense fallback={<h1>Loading...</h1>}>{children}</Suspense>;
-};
+import React, { ReactNode } from "react";
+import { UserOutlined, HomeOutlined } from "@ant-design/icons";
 
-const routers: RouteObject[] = [
+import { Home, Login, User, Page404 } from "./routeList"
+
+export interface IRouter {
+  title: string;
+  path: string;
+  key?: string;
+  exact?: boolean;
+  component?: ReactNode;
+  children?: any;
+  icon?: ReactNode;
+}
+
+const routers: IRouter[] = [
   {
-    path: "/",
-    element: <AppLayout />,
-    //路由嵌套，子路由的元素需使用<Outlet />
-    children: [
-      {
-        // index: true,
-        path: "/home",
-        element: lazyLoad(<Home />)
-      },
-      {
-        path: "/user/list",
-        element: lazyLoad(<User />)
-      },
-    ]
+    path: "/admin/home",
+    key: "home",
+    component: <Home />,
+    title: '首页',
+    icon: <HomeOutlined />
   },
   {
-    path: "/login",
-    element: lazyLoad(<Login />)
+    path: "/admin/user",
+    key: "user",
+    title: '用户管理',
+    icon: <UserOutlined />,
+    children: [
+      {
+        path: "/admin/user/list",
+        key: "userList",
+        component: <User />,
+        title: '用户列表',
+      }
+    ]
   }
 ];
-export default routers;
+
+const unAuthRouter: IRouter[] = [
+  {
+    path: "/login",
+    key: "login",
+    component: <Login />,
+    title: '登录'
+  },
+  {
+    path: "*",
+    key: "404",
+    exact: false,
+    component: <Page404 />,
+    title: '404'
+  },
+]
+
+const onRouteBefore = () => {
+  // 动态修改页面title
+  // const pathname = window.location.pathname;
+  // const title = routers.find(item => item.path === pathname)?.title;
+  // if (title) {
+  //   document.title = title;
+  // }
+  document.title = '后台管理项目';
+}
+
+export {
+  routers,
+  unAuthRouter,
+  onRouteBefore,
+};

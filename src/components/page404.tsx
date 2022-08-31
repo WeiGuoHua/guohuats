@@ -7,7 +7,7 @@ const Page404: React.FC = () => (
     status="404"
     title="404"
     subTitle="对不起，您访问的页面不存在。"
-    extra={<Button type="primary"><Link to="/home">返回首页</Link></Button>}
+    extra={<Button type="primary"><Link to="/login">返回登录</Link></Button>}
   />
 );
 

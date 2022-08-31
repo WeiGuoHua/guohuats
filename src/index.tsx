@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.less';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from "react-router-dom"
-// import { ConfigProvider } from 'antd';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
+  <Suspense fallback={<div>loading...</div>}>
     <Router>
       <App />
     </Router>
+  </Suspense>
 );
 
 // If you want to start measuring performance in your app, pass a function
