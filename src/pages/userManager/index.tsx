@@ -1,153 +1,196 @@
-import { Button,Checkbox,Form,Input,Modal, Radio, Select, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { useState } from "react";
+import AddUser from "./component/AddUser";
+import React, { useEffect, useState } from "react";
+import { mock as Mock } from "mockjs";
+import Api from './api'
+import '../../mock/mockData'
 import './style.less'
+const { Link } = Typography;
 interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
+  goodsClass: string;
+  goodsId: string;
+  goodsName: string;
+  goodsAddress: string;
+  goodsStar: string;
+  goodsImg: string;
+  goodsSale: string;
 }
+
 const columns: ColumnsType<DataType> = [
   {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
+    title: '商品种类',
+    dataIndex: 'goodsClass',
+    key: 'goodsClass',
     render: (text: string) => <span>{text}</span>,
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
+    title: '商品Id',
+    dataIndex: 'goodsId',
+    key: 'goodsId',
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
+    title: '商品名称',
+    dataIndex: 'goodsName',
+    key: 'goodsName',
   },
   {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    render: (_: any, { tags }: any) => (
-      <>
-        {tags.map((tag: any) => {
-          let color = tag.length > 5 ? 'geekblue' : 'green';
-          if (tag === 'loser') {
-            color = 'volcano';
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
+    title: '商品地址',
+    dataIndex: 'goodsAddress',
+    key: 'goodsAddress',
   },
   {
-    title: 'Action',
-    key: 'action',
-    render: (_: any, record: any) => (
+    title: '商品等级评价 ',
+    dataIndex: 'goodsStar',
+    key: 'goodsStar',
+  },
+  {
+    title: '商品售价',
+    dataIndex: 'goodsSale',
+    key: 'goodsSale',
+  },
+  {
+    title: '操作',
+    dataIndex: 'ccc',
+    key: 'ccc',
+    render: (text: string, record: DataType) => (
       <Space size="middle">
-        <span>Invite {record.name}</span>
-        <span>Delete</span>
+        <a>编辑</a>
+        <Popconfirm cancelText="取消" title="确定删除?" onConfirm={deleteRow}>
+          <Link color="red">
+            删除
+          </Link>
+        </Popconfirm>
       </Space>
     ),
   },
 ];
-const data: DataType[] = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-];
-
+const deleteRow = () => {
+  console.log('删除')
+}
+const data: any[] = [];
+for (let i = 0; i < 46; i++) {
+  data.push({
+    key: i,
+    goodsId: Mock('@id'),
+    goodsName: Mock('@cname'),
+    goodsClass: Mock('@cname'),
+    goodsAddress: Mock('@county(true)'),
+    goodsStar: Mock('@integer(1, 5)'),
+    goodsSale: Mock('@integer(1, 100)'),
+  });
+}
 function UserManager() {
   const [visible, setVisible] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
-  const onFormLayoutChange = ({ disabled }: { disabled: boolean }) => {
-    setComponentDisabled(disabled);
-  };
-  const showModal = () => {
-    setVisible(true);
-  };
+  const [userInfo, setUserInfo] = useState('');
+  const [isEdit, setEditStatus] = useState(false);
+  // const [data, setData] = useState([]);
 
-  const handleOk = () => {
-    setConfirmLoading(true);
-    setVisible(false);
-    setConfirmLoading(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  // 选中表格数据
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
   };
-
-  const handleCancel = () => {
-    console.log('Clicked cancel button');
+  // 表格选项配置
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+  // 初始化表格数据
+  // useEffect(() => {
+  //   setData(Mock({
+  //     // 20条数据
+  //     "data|20": [{
+  //       // 商品种类
+  //       "goodsClass": "女装",
+  //       // 商品Id
+  //       "goodsId|+1": 1,
+  //       //商品名称
+  //       "goodsName": "@ctitle(5)",
+  //       //商品地址
+  //       "goodsAddress": "@county(true)",
+  //       //商品等级评价★
+  //       "goodsStar|1-5": "★",
+  //       //商品售价
+  //       "goodsSale|30-500": 30,
+  //       // 标签
+  //     }]
+  //   }).data)
+  // }, [])
+  const showUserModal = (type: string) => {
+    switch (type) {
+      case 'add':
+        setVisible(true)
+        setEditStatus(false)
+        break;
+      case 'edit':
+        setVisible(true)
+        setEditStatus(true)
+        break;
+      default:
+        break;
+    }
+  };
+  const hideUserModal = () => {
     setVisible(false);
   };
+  const changeUser = (e: any): any => {
+    setUserInfo(e.target.value)
+    console.log(userInfo);
+  }
+  const search = () => {
+    Api.searchUser({ name: userInfo }).then((res: any) => {
+      // setData(Mock({
+      //   // 20条数据
+      //   "data|20": [{
+      //     // 商品种类
+      //     "goodsClass": "女装",
+      //     // 商品Id
+      //     "goodsId|+1": 1,
+      //     //商品名称
+      //     "goodsName": "@ctitle(5)",
+      //     //商品地址
+      //     "goodsAddress": "@county(true)",
+      //     //商品等级评价★
+      //     "goodsStar|1-5": "★",
+      //     //商品图片
+      //     "goodsImg": "@Image('16x16','@color','小甜甜')",
+      //     //商品售价
+      //     "goodsSale|30-500": 30,
+      //     // 标签
+      //     "tags|1-3": ["@city"],
+      //   }]
+      // }).data)
+    })
+  }
+  // 获取表达的值
   return (
     <div className="user-container">
       <div className="header-search">
-        <Button type="primary">查询</Button>
-        <Button type="primary" onClick={showModal}>新增</Button>
-        <Button type="primary">编辑</Button>
-        <Button type="primary">删除</Button>
+        <div>
+          <Input placeholder="请输入用户名" onChange={changeUser} width="120" />
+        </div>
+        <div>
+          <Space><Button type="primary" onClick={search}>查询</Button>
+            <Button type="primary" onClick={() => showUserModal('add')}>新增</Button>
+            <Button type="primary" onClick={() => showUserModal('edit')}>编辑</Button>
+            <Button type="primary">删除</Button></Space>
+        </div>
       </div>
-      
-      <Table columns={columns} dataSource={data} />
-      <Modal
-        title="新增用户"
-        visible={visible}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-      >
-        <Form
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 14 }}
-          // layout="horizontal"
-          onValuesChange={onFormLayoutChange}
-          disabled={componentDisabled}
-        >
-          <Form.Item label="Chekbox" name="disabled" valuePropName="checked">
-            <Checkbox>Checkbox</Checkbox>
-          </Form.Item>
-          <Form.Item label="Radio">
-            <Radio.Group>
-              <Radio value="apple"> Apple </Radio>
-              <Radio value="pear"> Pear </Radio>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item label="Input">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Select">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-          
-        </Form>
-      </Modal>
+
+      <Table
+        rowSelection={rowSelection}
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          defaultPageSize: 16,
+          // showQuickJumper: true,
+          showTotal: (total) => `共 ${total} 条`,
+        }}
+      />
+      <AddUser visible={visible} onCancel={hideUserModal} isEdit={isEdit} />
     </div>
   );
 }
 export default UserManager;
-
