@@ -4,10 +4,9 @@ import { message, Modal } from "antd";
 import { clear, get } from "./storage";
 
 const service = axios.create({
-  baseURL: process.env.REACT_APP_BASE_API,
+  baseURL: "http://10.3.108.193:9527/",
   timeout: 5000
 });
-
 service.interceptors.request.use(
   (config: any) => {
     NProgress.start();

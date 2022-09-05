@@ -1,123 +1,59 @@
-import { Button, Input, Popconfirm, Space, Table, Tag, Typography } from "antd";
+import { Button, Input, message, Popconfirm, Space, Table, Typography, Modal } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import AddUser from "./component/AddUser";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from "react";
-import { mock as Mock } from "mockjs";
 import Api from './api'
 import '../../mock/mockData'
 import './style.less'
+const { confirm } = Modal;
 const { Link } = Typography;
 interface DataType {
-  goodsClass: string;
-  goodsId: string;
-  goodsName: string;
-  goodsAddress: string;
-  goodsStar: string;
-  goodsImg: string;
-  goodsSale: string;
+  id: string;
+  name: string;
+  sex: string;
+  age: string;
+  birthday: string;
+  key: React.Key;
 }
 
-const columns: ColumnsType<DataType> = [
-  {
-    title: '商品种类',
-    dataIndex: 'goodsClass',
-    key: 'goodsClass',
-    render: (text: string) => <span>{text}</span>,
-  },
-  {
-    title: '商品Id',
-    dataIndex: 'goodsId',
-    key: 'goodsId',
-  },
-  {
-    title: '商品名称',
-    dataIndex: 'goodsName',
-    key: 'goodsName',
-  },
-  {
-    title: '商品地址',
-    dataIndex: 'goodsAddress',
-    key: 'goodsAddress',
-  },
-  {
-    title: '商品等级评价 ',
-    dataIndex: 'goodsStar',
-    key: 'goodsStar',
-  },
-  {
-    title: '商品售价',
-    dataIndex: 'goodsSale',
-    key: 'goodsSale',
-  },
-  {
-    title: '操作',
-    dataIndex: 'ccc',
-    key: 'ccc',
-    render: (text: string, record: DataType) => (
-      <Space size="middle">
-        <a>编辑</a>
-        <Popconfirm cancelText="取消" title="确定删除?" onConfirm={deleteRow}>
-          <Link color="red">
-            删除
-          </Link>
-        </Popconfirm>
-      </Space>
-    ),
-  },
-];
-const deleteRow = () => {
-  console.log('删除')
-}
-const data: any[] = [];
-for (let i = 0; i < 46; i++) {
-  data.push({
-    key: i,
-    goodsId: Mock('@id'),
-    goodsName: Mock('@cname'),
-    goodsClass: Mock('@cname'),
-    goodsAddress: Mock('@county(true)'),
-    goodsStar: Mock('@integer(1, 5)'),
-    goodsSale: Mock('@integer(1, 100)'),
-  });
-}
 function UserManager() {
   const [visible, setVisible] = useState(false);
-  const [userInfo, setUserInfo] = useState('');
+  const [keyword, setKeyword] = useState('');
   const [isEdit, setEditStatus] = useState(false);
-  // const [data, setData] = useState([]);
-
+  const [userDetail, setEditData] = useState([]);
+  const [data, setData] = useState<DataType[]>()
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  useEffect(() => {
+    Api.getUserList({}).then((res) => {
+      setData(res.data.data)
+    })
+  }, [])
   // 选中表格数据
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-  // 表格选项配置
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  // 初始化表格数据
-  // useEffect(() => {
-  //   setData(Mock({
-  //     // 20条数据
-  //     "data|20": [{
-  //       // 商品种类
-  //       "goodsClass": "女装",
-  //       // 商品Id
-  //       "goodsId|+1": 1,
-  //       //商品名称
-  //       "goodsName": "@ctitle(5)",
-  //       //商品地址
-  //       "goodsAddress": "@county(true)",
-  //       //商品等级评价★
-  //       "goodsStar|1-5": "★",
-  //       //商品售价
-  //       "goodsSale|30-500": 30,
-  //       // 标签
-  //     }]
-  //   }).data)
-  // }, [])
+
+  // 删除多条数据
+  const deleteRows = () => {
+    if (selectedRowKeys.length < 1) {
+      message.warn('请选择一条或多条数据！')
+      return
+    }
+    confirm({
+      title: '确认删除这些文章？',
+      icon: <ExclamationCircleOutlined />,
+      content: '删除文章不可恢复，请谨慎操作！',
+      onOk() {
+        
+        Api.deleteUser({id: selectedRowKeys}).then(()=>{
+          message.success('删除成功！')
+          setSelectedRowKeys([])
+          search();
+        })
+      },
+      onCancel() { },
+    });
+  }
+  // 显示新增修改弹框
   const showUserModal = (type: string) => {
     switch (type) {
       case 'add':
@@ -132,65 +68,119 @@ function UserManager() {
         break;
     }
   };
+  // 用户列表表头数字段
+  const columns: ColumnsType<DataType> = [
+    {
+      key: 'id',
+      title: 'id',
+      dataIndex: 'id',
+      render: (text: string) => <span>{text}</span>,
+    },
+    {
+      key: 'title',
+      title: '标题',
+      dataIndex: 'title',
+    },
+    {
+      key: 'createtime',
+      title: '创建时间',
+      dataIndex: 'createtime',
+    },
+    {
+      key: 'constent',
+      title: '内容',
+      dataIndex: 'constent',
+    },
+    {
+      key: 'author',
+      title: '作者',
+      dataIndex: 'author',
+    },
+    {
+      title: '操作',
+      dataIndex: 'ccc',
+      key: 'ccc',
+      render: (text: string, record: DataType) => (
+        <Space size="middle">
+          <span onClick={() => editUser(record.id)}>编辑</span>
+          <Popconfirm cancelText="取消" title="确定删除?" onConfirm={() => deleteRow(record)}>
+            <Link color="red">
+              删除
+            </Link>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+  // 获取文章列表（筛选）
+  const search = () => {
+    Api.getUserList({ keyword }).then((res: any) => {
+      setData(res.data.data)
+    })
+  }
+  // 修改用户
+  const editUser = (id: any) => {
+    Api.getUserDetail(id).then(res => {
+      console.log(`获取id:${id}用户详情`);
+      // 显示弹框
+      setVisible(true)
+      // 修改弹框状态（是否为修改装啊提）
+      setEditStatus(true)
+      // 弹框传值
+      setEditData(res.data.data)
+    })
+  }
+  // 删除单条数据
+  const deleteRow = (row: any) => {
+    console.log(row);
+
+    Api.deleteUser({ id: row.id }).then(res => {
+      message.success(`${row.title}删除成功`)
+      search();
+    })
+  }
+  // 关闭弹框
   const hideUserModal = () => {
     setVisible(false);
   };
+  // 新增修改用户
   const changeUser = (e: any): any => {
-    setUserInfo(e.target.value)
-    console.log(userInfo);
+    setKeyword(e.target.value)
   }
-  const search = () => {
-    Api.searchUser({ name: userInfo }).then((res: any) => {
-      // setData(Mock({
-      //   // 20条数据
-      //   "data|20": [{
-      //     // 商品种类
-      //     "goodsClass": "女装",
-      //     // 商品Id
-      //     "goodsId|+1": 1,
-      //     //商品名称
-      //     "goodsName": "@ctitle(5)",
-      //     //商品地址
-      //     "goodsAddress": "@county(true)",
-      //     //商品等级评价★
-      //     "goodsStar|1-5": "★",
-      //     //商品图片
-      //     "goodsImg": "@Image('16x16','@color','小甜甜')",
-      //     //商品售价
-      //     "goodsSale|30-500": 30,
-      //     // 标签
-      //     "tags|1-3": ["@city"],
-      //   }]
-      // }).data)
-    })
-  }
-  // 获取表达的值
   return (
     <div className="user-container">
       <div className="header-search">
         <div>
-          <Input placeholder="请输入用户名" onChange={changeUser} width="120" />
+          <Input placeholder="请输入文章标题" onChange={changeUser} width="120" />
         </div>
         <div>
-          <Space><Button type="primary" onClick={search}>查询</Button>
+          <Space>
+            <Button type="primary" onClick={search}>查询</Button>
             <Button type="primary" onClick={() => showUserModal('add')}>新增</Button>
-            <Button type="primary" onClick={() => showUserModal('edit')}>编辑</Button>
-            <Button type="primary">删除</Button></Space>
+            <Button type="primary" onClick={deleteRows}>批量删除</Button>
+          </Space>
         </div>
       </div>
-
-      <Table
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          defaultPageSize: 16,
-          // showQuickJumper: true,
-          showTotal: (total) => `共 ${total} 条`,
-        }}
-      />
-      <AddUser visible={visible} onCancel={hideUserModal} isEdit={isEdit} />
-    </div>
+      <div className="user-list">
+        <Table
+          rowKey={record => record.id}
+          rowSelection={{
+            type: "checkbox",
+            onChange: (selectedRowKeys, selectedRows) => {
+              setSelectedRowKeys(selectedRowKeys);
+            }
+          }}
+          columns={columns}
+          dataSource={data}
+          size="small"
+          pagination={{
+            defaultPageSize: 15,
+            showTotal: (total) => `共 ${total} 条`,
+          }}
+        />
+      </div>
+      <AddUser visible={visible} onCancel={hideUserModal} isEdit={isEdit} data={userDetail} search={search} />
+    </div >
   );
 }
 export default UserManager;

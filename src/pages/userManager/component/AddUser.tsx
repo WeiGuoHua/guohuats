@@ -1,4 +1,5 @@
-import { FormInstance, Form, Modal, Checkbox, Radio, Input, Select } from "antd";
+import { FormInstance, Form, Modal, Input, DatePicker, message } from "antd";
+import moment from "moment";
 import { useRef, useEffect, useState } from "react";
 import Api from "../api";
 
@@ -6,8 +7,10 @@ interface ModalFormProps {
   visible: boolean;
   isEdit: boolean;
   onCancel: () => void;
+  data: any;
+  search: () => void;
 }
-const useResetFormOnCloseModal = ({ form, visible, isEdit }: { form: FormInstance; visible: boolean, isEdit: boolean }) => {
+const useResetFormOnCloseModal = ({ form, visible, isEdit, data }: { form: FormInstance; visible: boolean, isEdit: boolean, data: any }) => {
   const prevVisibleRef = useRef<boolean>();
   useEffect(() => {
     prevVisibleRef.current = visible;
@@ -16,11 +19,16 @@ const useResetFormOnCloseModal = ({ form, visible, isEdit }: { form: FormInstanc
   // 弹框显示并赋值
   useEffect(() => {
     if (isEdit && visible) {
+      const { title, createtime, constent, author } = data;
+      console.log(data);
       form.setFieldsValue({
-        disabled: true, type: 'apple', name: '123', checked: 'demo'
+        title,
+        createtime: moment(createtime),
+        constent,
+        author
       })
     }
-  }, [form, isEdit, visible]);
+  }, [form, isEdit, visible, data]);
   // 关闭清空表单
   useEffect(() => {
     if (!visible && prevVisible) {
@@ -29,22 +37,40 @@ const useResetFormOnCloseModal = ({ form, visible, isEdit }: { form: FormInstanc
   }, [form, prevVisible, visible, isEdit]);
 };
 // 弹框组件
-const ModalForm: React.FC<ModalFormProps> = ({ visible, onCancel, isEdit }) => {
+const ModalForm: React.FC<ModalFormProps> = ({ visible, onCancel, isEdit, data, search }) => {
   const [form] = Form.useForm();
   const [loading, setloading] = useState<boolean>(false);
   useResetFormOnCloseModal({
     form,
     visible,
-    isEdit
+    isEdit,
+    data
   });
 
   const onOk = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then((fieldsValue) => {
       setloading(true);
-      Api.addUser(form.getFieldsValue()).then(() => {
-        setloading(false)
-        onCancel()
-      })
+      const values = {
+        ...fieldsValue,
+        id: data.id,
+        createtime: fieldsValue.createtime.format('YYYY/MM/DD')
+      }      
+      if (isEdit) {
+        Api.editUser(values).then(() => {
+          console.log('编辑成功', values);
+          message.success('修改成功！')
+          setloading(false)
+          search()
+          onCancel()
+        })
+      } else {
+        Api.addUser(values).then(() => {
+          message.success('新增成功！')
+          setloading(false)
+          search()
+          onCancel()
+        })
+      }
     });
   };
 
@@ -55,6 +81,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ visible, onCancel, isEdit }) => {
       confirmLoading={loading}
       onCancel={onCancel}
       onOk={onOk}
+      okText="确定"
+      cancelText="取消"
     >
       <Form
         labelCol={{ span: 4 }}
@@ -62,23 +90,18 @@ const ModalForm: React.FC<ModalFormProps> = ({ visible, onCancel, isEdit }) => {
         form={form}
         name="userForm"
       >
-        <Form.Item label="Chekbox" name="disabled" valuePropName="checked"
-          rules={[{ required: true, message: '请勾选！' }]}>
-          <Checkbox>Checkbox</Checkbox>
+        <Form.Item label="标题" name="title"
+          rules={[{ required: true, message: '请输入标题' }]}>
+          <Input placeholder="请输入标题" />
         </Form.Item>
-        <Form.Item label="Radio" name="type">
-          <Radio.Group>
-            <Radio value="apple"> Apple </Radio>
-            <Radio value="pear"> Pear </Radio>
-          </Radio.Group>
+        <Form.Item label="创建时间" name="createtime">
+          <DatePicker placeholder="请选择时间" />
         </Form.Item>
-        <Form.Item label="Input" name="name" rules={[{ required: true, message: '必填' }]}>
-          <Input />
+        <Form.Item label="内容" name="constent" rules={[{ required: true, message: '请输入文章内容' }]}>
+          <Input.TextArea placeholder="请输入文章内容" />
         </Form.Item>
-        <Form.Item label="Select" name="checked">
-          <Select>
-            <Select.Option value="demo">Demo</Select.Option>
-          </Select>
+        <Form.Item label="作者" name="author">
+          <Input placeholder="请输入作者姓名" />
         </Form.Item>
       </Form>
     </Modal>
