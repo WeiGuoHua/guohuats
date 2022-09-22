@@ -14,10 +14,8 @@ const tailLayout = {
 
 function Login() {
   function onFinish(values: any) {
-    console.log(values);
     message.success('登录成功！')
-    set('token', '123456')
-
+    set('token', '123456');
   };
 
   return <div className='login'>

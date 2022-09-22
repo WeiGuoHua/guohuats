@@ -7,7 +7,7 @@ import Api from './api'
 import '../../mock/mockData'
 import './style.less'
 const { confirm } = Modal;
-const { Link } = Typography;
+const { Text } = Typography;
 interface DataType {
   id: string;
   name: string;
@@ -102,11 +102,9 @@ function UserManager() {
       key: 'ccc',
       render: (text: string, record: DataType) => (
         <Space size="middle">
-          <span onClick={() => editUser(record.id)}>编辑</span>
+          <a onClick={() => editUser(record.id)}>编辑</a>
           <Popconfirm cancelText="取消" title="确定删除?" onConfirm={() => deleteRow(record)}>
-            <Link color="red">
-              删除
-            </Link>
+            <Text className="cur-hand" type="danger">删除</Text>
           </Popconfirm>
         </Space>
       ),
@@ -121,7 +119,6 @@ function UserManager() {
   // 修改用户
   const editUser = (id: any) => {
     Api.getUserDetail(id).then(res => {
-      console.log(`获取id:${id}用户详情`);
       // 显示弹框
       setVisible(true)
       // 修改弹框状态（是否为修改装啊提）
@@ -132,8 +129,6 @@ function UserManager() {
   }
   // 删除单条数据
   const deleteRow = (row: any) => {
-    console.log(row);
-
     Api.deleteUser({ id: row.id }).then(res => {
       message.success(`${row.title}删除成功`)
       search();
@@ -148,7 +143,7 @@ function UserManager() {
     setKeyword(e.target.value)
   }
   return (
-    <div className="user-container">
+    <div className="user-container animate__animated animate__fadeIn">
       <div className="header-search">
         <div>
           <Input placeholder="请输入文章标题" onChange={changeUser} width="120" />

@@ -3,15 +3,33 @@
   height: 100vh;
   .ant-layout {
     height: 100%;
-    .ant-layout-header{
-      padding: 0 16px ;
+    .ant-layout-header {
+      padding: 0 16px;
     }
     .logo {
       color: #fff;
       font-size: 20px;
     }
+    .header-box {
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      .header-right {
+        display: flex;
+        align-items: center;
+        .pointer{
+          cursor: pointer;
+        }
+      }
+    }
+
     .sider {
       height: 100%;
+      .iconFont {
+        font-size: 18px;
+      }
     }
     .ant-layout-footer {
       padding: 0;
@@ -24,7 +42,7 @@
     .breadcrumb {
       padding-bottom: 16px;
     }
-    .ant-layout-content{
+    .ant-layout-content {
       padding: 0;
       overflow: auto;
     }

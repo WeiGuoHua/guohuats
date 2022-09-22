@@ -20,12 +20,11 @@ const useResetFormOnCloseModal = ({ form, visible, isEdit, data }: { form: FormI
   useEffect(() => {
     if (isEdit && visible) {
       const { title, createtime, constent, author } = data;
-      console.log(data);
       form.setFieldsValue({
         title,
-        createtime: moment(createtime),
+        createtime: createtime ? moment(createtime) : new Date().toLocaleDateString(),
         constent,
-        author
+        author: author ? author : author,
       })
     }
   }, [form, isEdit, visible, data]);
@@ -53,11 +52,11 @@ const ModalForm: React.FC<ModalFormProps> = ({ visible, onCancel, isEdit, data, 
       const values = {
         ...fieldsValue,
         id: data.id,
-        createtime: fieldsValue.createtime.format('YYYY/MM/DD')
+        author: fieldsValue.author ? fieldsValue.author : '默认作者',
+        createtime: fieldsValue.createtime ? fieldsValue.createtime.format('YYYY/MM/DD'):new Date().toLocaleDateString()
       }      
       if (isEdit) {
         Api.editUser(values).then(() => {
-          console.log('编辑成功', values);
           message.success('修改成功！')
           setloading(false)
           search()

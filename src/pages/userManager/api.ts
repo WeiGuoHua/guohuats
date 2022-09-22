@@ -2,7 +2,6 @@
 import axios from "axios";
 const Api = {
   getUserList: (data: any) => {    
-    console.log(data);
     return axios({
       url: `/api/blog/list`,
       data,
@@ -17,7 +16,6 @@ const Api = {
     });
   },
   searchUser: (data: any) => {
-    console.log(data);
     return axios({
       url: "/serachUser",
       data,

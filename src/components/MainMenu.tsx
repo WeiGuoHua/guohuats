@@ -1,16 +1,12 @@
 
 import { UserOutlined } from '@ant-design/icons';
-
 import { Menu } from 'antd';
-import Sider from 'antd/lib/layout/Sider';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { IRouter, routers } from '../router';
-
-
-export default class MainMenu extends Component {
-  generateMenu = (data: IRouter[]) => {
+// 左侧菜单递归
+export default function MainMenu() {
+  const generateMenu = (data: IRouter[]) => {
     return data.map((item: any) => {
       if (item.children) {
         return (
@@ -19,7 +15,7 @@ export default class MainMenu extends Component {
             icon={<UserOutlined />}
             title={item.title}
           >
-            {this.generateMenu(item.children)}
+            {generateMenu(item.children)}
           </SubMenu>
         )
       }
@@ -28,31 +24,18 @@ export default class MainMenu extends Component {
           <Link to={item.path}>{item.title}</Link>
         </Menu.Item>
       );
-    }
-    )
+    })
   }
   // 生成动态菜单
-  render() {
-    return (
-      <div className='sider'>
-        <Sider
-          style={{ height: "100%" }}
-          collapsible 
-          collapsed={false}
-          // onCollapse={value => setCollapsed(value)}
-        >
-          <div className="logo" />
-          <Menu
-            mode="inline"
-            style={{ height: '100%', borderRight: 0 }}
-            theme="dark"
-            // items={this.generateMenu(routers)}
-          >
-            {this.generateMenu(routers)}
-          </Menu>
-        </Sider>
-
-      </div>
-    )
-  };
+  return (
+    <Menu
+      mode="inline"
+      style={{ height: '100%', borderRight: 0 }}
+      theme="dark"
+      // defaultOpenKeys={['user']}
+      // defaultSelectedKeys={['userList']}
+    >
+      {generateMenu(routers)}
+    </Menu>
+  )
 };
