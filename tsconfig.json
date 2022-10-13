@@ -1,21 +1,20 @@
-{
-  "compilerOptions": {
-    // 写过vue2的人都知道，vue的template里，只能有一个根标签，使用多标签，vetur插件就会提示你有错误，但是vue3之后，去掉了这个限制，template标签里是允许有多个标签的，这是vue3.0的新功能，所以我们需要使用适合vue3的volar插件
-    "types": ["element-plus/global"],
+{ 
+  "compilerOptions": { 
+    "types": ["element-plus/global"], 
 
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
-    "skipLibCheck": true
+    "target": "ESNext", 
+    "useDefineForClassFields": true, 
+    "module": "ESNext", 
+    "moduleResolution": "Node", 
+    "strict": true, 
+    "jsx": "preserve", 
+    "sourceMap": true, 
+    "resolveJsonModule": true, 
+    "isolatedModules": true, 
+    "esModuleInterop": true, 
+    "lib": ["ESNext", "DOM"],  
+    "skipLibCheck": true 
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "references": [{ "path": "./tsconfig.node.json" }]
-}
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"], 
+  "references": [{ "path": "./tsconfig.node.json" }] 
+} 
