@@ -1,5 +1,5 @@
 <template>
-  <div class="container"></div>
+  <div class="container">500</div>
 </template>
 
 <script>
@@ -7,6 +7,6 @@
 // import Api from './api';
 
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .container{}
 </style>
