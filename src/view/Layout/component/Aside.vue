@@ -1,47 +1,77 @@
 <template>
-  <el-aside width="200px">
-    <el-menu :default-openeds="['1']">
-      <el-sub-menu index="1">
-        <template #title>
-          <el-icon><message /></el-icon>住院医生
-        </template>
-        <el-menu-item index="1-1"
-          ><el-icon><message /></el-icon>病人列表</el-menu-item
-        >
-        <el-menu-item index="1-2">
-          <el-icon><message /></el-icon>医嘱信息
-        </el-menu-item>
-        <el-sub-menu index="1-4">
-          <template #title>
-            <el-icon><message /></el-icon>报表
-          </template>
-          <el-menu-item index="1-4-1">
-            <el-icon><message /></el-icon>报表申请
+  <el-aside width="200px" class="nav">
+    <el-menu :default-active="curPath" router :unique-opened="false">
+      <!-- 递归显示多级菜单 -->
+      <template v-for="(itemMenu, mainIndex) in menuList" :key="mainIndex + ''">
+        <router-link :to="itemMenu.path" v-if="!itemMenu.children">
+          <el-menu-item :index="itemMenu.path">
+            <el-icon :size="20">
+              <component :is="itemMenu.icon" />
+            </el-icon>
+            <span>{{ itemMenu.name }}</span>
           </el-menu-item>
+        </router-link>
+        <el-sub-menu :index="itemMenu.path" v-else>
+          <template #title>
+            <el-icon :size="20">
+              <component :is="itemMenu.icon" />
+            </el-icon>
+            <span>{{ itemMenu.name }}</span>
+          </template>
+          <template v-for="(itemSubMenu, subIndex) in itemMenu.children" :key="subIndex + ''">
+            <router-link :to="itemSubMenu.path" v-if="!itemSubMenu.children">
+              <el-menu-item :index="itemSubMenu.path">
+                <el-icon :size="20">
+                  <component :is="itemSubMenu.icon" />
+                </el-icon>
+                <span>{{ itemSubMenu.name }}</span>
+              </el-menu-item>
+            </router-link>
+            <el-sub-menu :index="itemSubMenu.path" v-else>
+              <template #title>
+                <el-icon :size="20">
+                  <component :is="itemSubMenu.icon" />
+                </el-icon>
+                <span>{{ itemSubMenu.name }}</span>
+              </template>
+              <router-link
+                :to="itemSubSubMenu.path"
+                v-for="(itemSubSubMenu, subSubIndex) in itemSubMenu.children"
+                :key="subSubIndex + ''"
+              >
+                <el-menu-item :index="itemSubSubMenu.path">
+                  <el-icon :size="20">
+                    <component :is="itemSubSubMenu.icon" />
+                  </el-icon>
+                  <span>{{ itemSubSubMenu.name }}</span>
+                </el-menu-item>
+              </router-link>
+            </el-sub-menu>
+          </template>
         </el-sub-menu>
-      </el-sub-menu>
-      <el-menu-item index="2">
-        <el-icon><message /></el-icon>电子申请
-      </el-menu-item>
-      <el-menu-item index="3">
-        <el-icon><message /></el-icon>护理文书
-      </el-menu-item>
-      <el-menu-item index="4">
-        <el-icon><message /></el-icon>权限管理
-      </el-menu-item>
-      <el-menu-item index="5">
-        <el-icon><message /></el-icon>设置
-      </el-menu-item>
-      <el-menu-item index="6">
-        <el-icon><message /></el-icon>角色管理
-      </el-menu-item>
+      </template>
     </el-menu>
   </el-aside>
 </template>
 
-<script setup lang="ts">
-import { Message } from '@element-plus/icons-vue';
-// import { reactive, ref, onMounted } from 'vue'
-// import Api from './api';
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+import { onBeforeRouteUpdate, useRouter } from 'vue-router';
+import { routes } from '../../../router/index';
+const router = useRouter();
+const curPath = ref('');
+const menuList = routes[0].children;
+
+onMounted(() => {
+  curPath.value = router.currentRoute.value.path;
+  onBeforeRouteUpdate((to) => {
+    curPath.value = to.path;
+  });
+});
 </script>
-<style lang="scss" scoped></style>
+
+<style>
+.nav a {
+  text-decoration: none;
+}
+</style>

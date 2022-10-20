@@ -1,45 +1,71 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
+
 import Home from '../view/Home/Home.vue';
 import Login from '../view/Login/Login.vue';
 import Layout from '../view/Layout/Layout.vue';
-import EditDoctor from '../view/Doctor/Doctor.vue'
-const routes: Array<RouteRecordRaw> = [
+import DoctorList from '../view/common/DoctorList/DoctorList.vue';
+import FlashTable from '../view/common/FlashTable/FlashTable.vue';
+import FlashForm from '../view/common/FlashForm/FlashForm.vue';
+// 路由
+export const routes = [
   {
-    path: '/login',
-    name: 'ccc',
-    component: Login
-  },
-  {
-    path: '/',
+    path: '',
     component: Layout,
-    redirect: '/home',
-    meta: { title: '首页', path: '/' },
+    redirect: '/index',
     children: [
       {
-        path: 'home',
-        component: Home,
-        name: 'Home',
-        meta: {
-          requireAuth: true,
-          title: '首页',
-          path: '/home'
-        },
+        path: '/index',
+        name: 'CIS首页',
+        icon: 'HomeFilled',
+        component: Home
+      },
+      {
+        path: '/common',
+        name: '常用功能',
+        icon: 'Operation',
         children: [
           {
-            path: '/home/doctor',
-            component: EditDoctor,
-            name: 'Doctor',
-            meta: {
-              requireAuth: true,
-              title: '医生编辑',
-              path: '/home/doctor'
-            }
+            path: '/common/list',
+            name: '卡片列表',
+            icon: 'Postcard',
+            component: DoctorList
+          },
+          {
+            path: '/common/flashTable',
+            name: '快速表格',
+            icon: 'List',
+            component: FlashTable
+          },
+          {
+            path: '/common/flashForm',
+            name: '快速表单',
+            icon: 'Tickets',
+            component: FlashForm
+          }
+        ]
+      },
+      {
+        path: '/doctor/orderSettings',
+        name: '医嘱设置',
+        icon: 'Setting',
+        children: [
+          {
+            path: '/doctor/orderSettings/remarksMaintenance',
+            name: '备注维护',
+            icon: 'DataBoard',
+            component: DoctorList
           }
         ]
       }
     ]
+  },
+  {
+    path: '/login',
+    name: '登录',
+    component: Login
   }
 ];
+
 const router = createRouter({
   history: createWebHistory(),
   routes

@@ -10,6 +10,7 @@ import axios from './utils/request';
 import { createPinia } from 'pinia';
 import VXETable from 'vxe-table';
 import 'vxe-table/lib/style.css';
+import './assets/style/animate.min.css';
 
 let app = createApp(Appv);
 

@@ -5,25 +5,20 @@
       <el-container>
         <Aside />
         <el-container class="container-body">
-          <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-            <el-breadcrumb-item><a href="/">promotion management</a></el-breadcrumb-item>
-            <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-          </el-breadcrumb>
-          <el-main><router-view></router-view></el-main>
+          <Bread />
+          <el-main  class="animate__animated animate__fadeIn" ><router-view></router-view></el-main>
           <!-- <el-footer>Footer</el-footer> -->
         </el-container>
       </el-container>
     </el-container>
   </div>
-  <!-- </div> -->
 </template>
 
 <script setup lang="ts">
-// import { reactive, ref, onMounted } from 'vue'
-// import Api from './api';
 import Header from './component/Header';
 import Aside from './component/Aside';
+// 引入bread组件
+import Bread from '@/components/Bread.vue';
 </script>
 <style lang="scss" scoped>
 .el-header {
@@ -38,6 +33,10 @@ import Aside from './component/Aside';
   }
   :deep(.el-menu) {
     height: 100%;
+  }
+
+  .container-body {
+    flex-direction: column;
   }
 }
 </style>

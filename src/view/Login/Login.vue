@@ -99,7 +99,7 @@ const login = (formEl: FormInstance | undefined) => {
   isLoading.value = true;
   formEl.validate((valid) => {
     if (valid) {
-      router.push('./home');
+      router.push('./index');
       isLoading.value = false;
     } else {
       isLoading.value = false;
