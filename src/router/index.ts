@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
-
+// 全局组件
 import Home from '../view/Home/Home.vue';
 import Login from '../view/Login/Login.vue';
 import Layout from '../view/Layout/Layout.vue';
-import DoctorList from '../view/common/DoctorList/DoctorList.vue';
-import FlashTable from '../view/common/FlashTable/FlashTable.vue';
-import FlashForm from '../view/common/FlashForm/FlashForm.vue';
+// 普通组件
+import DoctorList from '../view/Common/DoctorList/DoctorList.vue';
+import FlashTable from '../view/Common/FlashTable/FlashTable.vue';
+import FlashForm from '../view/Common/FlashForm/FlashForm.vue';
 // 路由
 export const routes = [
   {
-    path: '',
+    path: '/',
     component: Layout,
     redirect: '/index',
     children: [
@@ -44,6 +45,7 @@ export const routes = [
           }
         ]
       },
+
       {
         path: '/doctor/orderSettings',
         name: '医嘱设置',

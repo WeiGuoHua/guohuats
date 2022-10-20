@@ -1,6 +1,6 @@
 <!--患者一览-->
 <template>
-  <div class="bedInfoList" >
+  <div class="bedInfoList animate__animated animate__fadeIn">
     <div class="header">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="病人">
@@ -64,11 +64,11 @@ import { defineComponent, reactive, toRefs, ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 // formInline
 const formInline = reactive({
-  user: '',
+  user: '111',
   region: ''
 });
 // 定义一个带数据的userList
-const userList = ref([
+const userList = reactive([
   {
     background: ' #409eff',
     name: '张三',
@@ -209,12 +209,10 @@ const userList = ref([
     .person {
       display: flex;
       min-width: 200px;
-      //max-width: 400px;
       margin-bottom: 20px;
       cursor: pointer;
       font-size: 14px;
       border-radius: 10px;
-      border: 1px solid #ebeef5;
       .userInfo {
         width: 110px;
         color: #fff;
@@ -230,16 +228,16 @@ const userList = ref([
         }
       }
       .otherInfo {
-        div {
-          margin-bottom: 4px;
-        }
         background: #fff;
         color: #333;
         width: calc(100% - 110px);
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
-        box-shadow: -2px 0px 5px -1px rgba(0, 0, 0, 0.5);
+        box-shadow: -2px 0px 5px 0px rgba(0, 0, 0, 0.5);
         padding: 8px;
+        div {
+          margin-bottom: 4px;
+        }
         .idTag {
           display: flex;
           justify-content: space-between;

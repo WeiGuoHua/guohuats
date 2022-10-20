@@ -1,12 +1,12 @@
 <template>
-  <div class="layout">
+  <div class="layout ">
     <el-container>
       <el-header class="header-dark"><Header /></el-header>
       <el-container>
         <Aside />
         <el-container class="container-body">
           <Bread />
-          <el-main  class="animate__animated animate__fadeIn" ><router-view></router-view></el-main>
+          <el-main><router-view></router-view></el-main>
           <!-- <el-footer>Footer</el-footer> -->
         </el-container>
       </el-container>

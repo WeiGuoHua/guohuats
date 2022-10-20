@@ -29,7 +29,6 @@ export default defineConfig({
     open: true,
     host: '0.0.0.0',
     port: 8080,
-    hmr: true,
     proxy: {
       '/cis': {
         target: 'http://10.1.94.189/',

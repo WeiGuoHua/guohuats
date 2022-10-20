@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login animate__animated animate__fadeIn">
     <div class="logo"></div>
     <div class="login-wrapper">
       <div class="login-box">

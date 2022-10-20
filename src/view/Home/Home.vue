@@ -1,6 +1,6 @@
 <template>
-  <div class="homes">
-    <el-button type="success" @click="edit">编辑</el-button>
+  <div class="homes animate__animated animate__fadeIn">
+    <el-button type="success" @click="edit">编辑1111</el-button>
     <el-button type="primary">新增</el-button>
     <!-- <vxe-table show-overflow ref="xTable1" height="300" :row-config="{ isHover: true }">
       <vxe-column type="seq" width="100"></vxe-column>
