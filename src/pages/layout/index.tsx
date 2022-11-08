@@ -38,7 +38,7 @@ function AppLayout(props: any) {
                 alt="Logo"
                 style={{ width: "40px", height: "40px" }}
               />{" "}
-              CIS智慧医院
+              React Project
             </div>
             <div className="header-right">
               <Space size={8}>
